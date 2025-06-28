@@ -1,127 +1,102 @@
-body, html {
-  margin: 0; padding: 0; height: 100%;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #0a0a0a, #111);
-  color: white;
-  user-select: none;
-  display: flex; justify-content: center; align-items: center;
-  height: 100vh;
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-#app {
-  width: 900px;
-  height: 400px;
-  position: relative;
-  background: #111;
-  border-radius: 12px;
-  box-shadow: 0 0 25px #00ffff;
+body {
+  background-color: #121212;
+  color: #00ffff;
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  user-select: none;
   overflow: hidden;
 }
 
-.menu {
-  display: none;
-  height: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-  text-align: center;
+h1 {
+  font-size: 3em;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px #00ffff;
 }
 
-.menu.active {
-  display: block;
-}
-
-#start-menu h1 {
-  font-size: 60px;
-  margin-bottom: 30px;
-  text-shadow: 0 0 15px #00ffff;
+h2 {
+  margin-bottom: 1rem;
+  color: #44ffcc;
 }
 
 button {
   background: #00ffff;
   border: none;
-  padding: 15px 30px;
-  font-size: 20px;
-  color: #000;
-  cursor: pointer;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
   border-radius: 8px;
-  box-shadow: 0 0 12px #00ffff;
-  transition: background-color 0.3s ease;
+  color: #121212;
+  cursor: pointer;
+  box-shadow: 0 0 15px #00ffff;
+  transition: background-color 0.3s;
 }
 
 button:hover {
-  background: #00bbbb;
+  background-color: #00bbbb;
 }
 
-#level-list {
-  margin-top: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
+.hidden {
+  display: none;
 }
 
-.level-button {
-  background: #007777;
-  color: white;
-  padding: 12px 22px;
+#menu, #levelSelect, #gameUI {
+  margin-top: 50px;
+}
+
+#levelList {
+  list-style: none;
+  max-width: 400px;
+  margin: 0 auto 2rem auto;
+  padding: 0;
+}
+
+#levelList li {
+  background: #222;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.5rem;
   border-radius: 6px;
   cursor: pointer;
-  min-width: 120px;
-  box-shadow: 0 0 6px #007777;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 0 10px #007777 inset;
+  color: #44ffcc;
+  font-weight: bold;
+  transition: background-color 0.3s;
 }
 
-.level-button:hover {
-  background: #00bbbb;
-}
-
-#game-section {
-  position: relative;
-  background: #111;
+#levelList li:hover {
+  background-color: #00bbbb;
 }
 
 #gameCanvas {
   display: block;
-  margin: 0 auto;
-  background: linear-gradient(to bottom, #222, #111);
-  border-radius: 10px;
+  margin: 20px auto;
+  background: #121212;
   border: 3px solid #00ffff;
+  box-shadow: 0 0 20px #00ffff;
 }
 
-#game-ui {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  width: calc(100% - 30px);
-  display: flex;
-  justify-content: space-between;
-  font-weight: bold;
-  font-size: 18px;
+#levelName {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
   text-shadow: 0 0 8px #00ffff;
 }
 
+#score {
+  font-size: 1.2rem;
+  margin-top: 5px;
+  color: #44ffcc;
+  text-shadow: 0 0 8px #44ffcc;
+}
+
 #message {
-  position: absolute;
-  top: 130px;
-  width: 100%;
-  text-align: center;
-  font-size: 24px;
+  font-size: 1.2rem;
+  margin-top: 10px;
   color: #ff4444;
-  text-shadow: 0 0 10px #ff4444;
-  pointer-events: none;
-  user-select: none;
-}
-
-#exit-game {
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
-  background: #ff4444;
-  color: white;
-  font-weight: bold;
-  box-shadow: 0 0 10px #ff4444;
-}
-
-#exit-game:hover {
-  background: #bb0000;
+  text-shadow: 0 0 8px #ff4444;
+  height: 30px;
 }
