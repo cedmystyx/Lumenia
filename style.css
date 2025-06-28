@@ -1,9 +1,9 @@
-/* Reset */
 * {
   margin: 0; padding: 0; box-sizing: border-box;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   user-select: none;
 }
+
 body, html {
   width: 100%; height: 100%;
   background: linear-gradient(to bottom, #120d22, #0b0716);
@@ -47,7 +47,6 @@ h2 {
   color: #c4b9ff;
 }
 
-/* Buttons */
 button {
   cursor: pointer;
   border: none;
@@ -71,7 +70,6 @@ button:hover {
   box-shadow: 0 8px 20px rgba(161, 124, 255, 0.7);
 }
 
-/* Levels list */
 #levelsList {
   display: flex;
   flex-direction: column;
@@ -95,7 +93,6 @@ button:hover {
   background: #8c67ff;
 }
 
-/* HUD */
 #hud {
   position: fixed;
   top: 12px;
@@ -110,7 +107,6 @@ button:hover {
   z-index: 10;
 }
 
-/* Canvas */
 canvas#gameCanvas {
   display: none;
   position: fixed;
@@ -118,5 +114,5 @@ canvas#gameCanvas {
   width: 100vw;
   height: 100vh;
   background: linear-gradient(to top, #1a1436, #3a298a);
-  cursor: crosshair;
+  cursor: pointer;
 }
