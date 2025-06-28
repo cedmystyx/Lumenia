@@ -7,18 +7,27 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="menu">
+  <div id="menu" class="centered">
     <h1>Heavenis Zephyros</h1>
-    <button onclick="showLevelMenu()">Jouer</button>
+    <button id="playBtn">Jouer</button>
   </div>
-  <div id="levelMenu" style="display:none; flex-direction: column; align-items:center;"></div>
+
+  <div id="levelMenu" class="centered hidden">
+    <h2>Choisis ton niveau</h2>
+    <div id="levelsList"></div>
+    <button id="backBtn">Retour</button>
+  </div>
+
   <canvas id="gameCanvas"></canvas>
-  <div id="hud">
+
+  <div id="hud" class="hidden">
     <span id="score">Score: 0</span>
     <span id="life">Vie: ♥♥♥</span>
   </div>
+
   <audio id="bgMusic" loop></audio>
   <audio id="shootSound" src="assets/sounds/shoot.mp3"></audio>
+
   <script src="main.js"></script>
 </body>
 </html>
