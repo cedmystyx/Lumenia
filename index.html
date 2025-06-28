@@ -1,37 +1,21 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Lumenia - Geometry Dash Like</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lumenia</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="menu" class="centered">
-    <h1>LUMENIA</h1>
-    <button id="playBtn">Jouer</button>
+  <div id="game-container">
+    <canvas id="gameCanvas" width="900" height="300"></canvas>
+    <div id="ui">
+      <div id="levelName"></div>
+      <div id="message"></div>
+      <div id="score"></div>
+    </div>
   </div>
-
-  <div id="levelMenu" class="centered hidden">
-    <h2>Choisir un niveau</h2>
-    <div id="levelsList"></div>
-    <button id="backBtn">Retour</button>
-  </div>
-
-  <div id="pauseMenu" class="centered hidden">
-    <h2>Pause</h2>
-    <button id="resumeBtn">Reprendre</button>
-    <button id="quitBtn">Quitter</button>
-  </div>
-
-  <canvas id="gameCanvas"></canvas>
-
-  <div id="hud" class="hidden">
-    <span id="score">Score: 0</span>
-  </div>
-
-  <audio id="bgMusic" loop></audio>
-
-<script src="main.js"></script>
+  <audio id="bgMusic" src="music.mp3" loop></audio>
+  <script src="main.js"></script>
 </body>
 </html>
