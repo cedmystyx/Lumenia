@@ -1,48 +1,121 @@
-body {
-  margin: 0;
-  padding: 0;
+/* Reset & basics */
+* {
+  margin: 0; padding: 0; box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+}
+body, html {
+  width: 100%; height: 100%;
+  background: linear-gradient(to bottom, #88c0d0, #81a1c1);
   overflow: hidden;
-  background: #a4e1ff;
-  font-family: sans-serif;
-}
-
-canvas {
-  display: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-#menu, #levelMenu {
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  background: linear-gradient(to bottom, #a4e1ff, #ffffff);
+  color: #2e3440;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
-#menu h1 {
-  font-size: 3em;
-  color: #2266aa;
-  margin-bottom: 20px;
-}
-
-#menu button, #levelMenu button {
-  padding: 1em 2em;
-  font-size: 1.2em;
-  cursor: pointer;
-  margin: 10px 0;
-}
-
-#hud {
+/* Centered containers */
+.centered {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  color: #003366;
-  font-size: 1.2em;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255 255 255 / 0.85);
+  padding: 40px 60px;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(46, 52, 64, 0.3);
+  text-align: center;
+  width: 320px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+h1 {
+  font-size: 3rem;
+  color: #5e81ac;
+  margin-bottom: 30px;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 6px #4c566a;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #434c5e;
+}
+
+/* Buttons */
+button {
+  cursor: pointer;
+  border: none;
+  background: #5e81ac;
+  color: #eceff4;
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 15px 30px;
+  margin: 10px auto;
+  display: block;
+  border-radius: 50px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 5px 15px rgba(94, 129, 172, 0.5);
+  user-select: none;
+  width: 100%;
+}
+
+button:hover {
+  background: #81a1c1;
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(129, 161, 193, 0.7);
+}
+
+/* Levels list */
+#levelsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 320px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+
+#levelsList button {
+  font-size: 1rem;
+  padding: 12px;
+  background: #81a1c1;
+  box-shadow: none;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: background-color 0.25s ease;
+}
+
+#levelsList button:hover {
+  background: #5e81ac;
+}
+
+/* HUD */
+#hud {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #eceff4;
+  text-shadow: 0 0 8px #2e3440;
+  display: flex;
+  gap: 25px;
+  user-select: none;
+  z-index: 10;
+}
+
+/* Canvas */
+canvas#gameCanvas {
   display: none;
-  gap: 20px;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to top, #88c0d0, #81a1c1);
+  cursor: crosshair;
 }
