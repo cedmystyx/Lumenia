@@ -1,33 +1,69 @@
-import { showMenu, setupMenuHandlers } from './ui.js';
-import { initLevelData } from './levels.js';
 import { Game } from './game.js';
+import { getLevels } from './levels.js';
+
+const menu = document.getElementById('menu');
+const playBtn = document.getElementById('playBtn');
+const levelSelect = document.getElementById('levelSelect');
+const levelList = document.getElementById('levelList');
+const backBtn = document.getElementById('backBtn');
+const gameUI = document.getElementById('gameUI');
 
 let currentGame = null;
+let currentLevelIndex = 0;
 
-// Initialisation app
-function init() {
-  initLevelData();
-  setupMenuHandlers(onLevelSelected, onExitGame);
-  showMenu('start-menu');
+function showMenu() {
+  menu.classList.remove('hidden');
+  levelSelect.classList.add('hidden');
+  gameUI.classList.add('hidden');
 }
 
-function onLevelSelected(levelIndex) {
-  currentGame = new Game(levelIndex, onGameEnd);
-  showMenu('game-section');
+function showLevelSelect() {
+  menu.classList.add('hidden');
+  levelSelect.classList.remove('hidden');
+  gameUI.classList.add('hidden');
+}
+
+function showGameUI() {
+  menu.classList.add('hidden');
+  levelSelect.classList.add('hidden');
+  gameUI.classList.remove('hidden');
+}
+
+// Affiche liste niveaux
+function populateLevelList() {
+  levelList.innerHTML = '';
+  const levels = getLevels();
+  levels.forEach((lvl, i) => {
+    const li = document.createElement('li');
+    li.textContent = `${i + 1} - ${lvl.name}`;
+    li.addEventListener('click', () => {
+      currentLevelIndex = i;
+      startGame(i);
+    });
+    levelList.appendChild(li);
+  });
+}
+
+// Démarrer jeu à un niveau
+function startGame(levelIndex) {
+  showGameUI();
+
+  currentGame = new Game(levelIndex, () => {
+    // Fin de niveau : revenir au select
+    showLevelSelect();
+    currentGame = null;
+  });
+
   currentGame.start();
 }
 
-function onExitGame() {
-  if(currentGame) {
-    currentGame.stop();
-    currentGame = null;
-  }
-  showMenu('level-select-menu');
-}
+playBtn.addEventListener('click', () => {
+  populateLevelList();
+  showLevelSelect();
+});
 
-function onGameEnd() {
-  // Optionnel : afficher menu fin, score, replay, etc.
-  showMenu('level-select-menu');
-}
+backBtn.addEventListener('click', () => {
+  showMenu();
+});
 
-window.onload = init;
+showMenu();
