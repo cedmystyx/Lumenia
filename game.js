@@ -242,6 +242,7 @@ export class Game {
     this.particles = [];
     this.screenShakeDuration = 0;
     this.screenShakeIntensity = 0;
+    this.levelLength = 1200; // Longueur approximative du niveau en px (ajustable)
   }
 
   init(levelData) {
@@ -261,9 +262,17 @@ export class Game {
           return new Obstacle(obs.x, obs.width, obs.height, levelData.speed);
       }
     });
+
     this.isGameOver = false;
     this.isLevelComplete = false;
     this.score = 0;
+    this.particles = [];
+    this.screenShakeDuration = 0;
+    this.screenShakeIntensity = 0;
+
+    // Calcul longueur du niveau en fonction des obstacles
+    this.levelLength = Math.max(...levelData.obstacles.map(o => (o.x + (o.width || o.size || 0)))) + 200;
+
     levelNameEl.textContent = `Niveau ${this.levelIndex + 1} : ${levelData.name}`;
     messageEl.textContent = '';
     scoreEl.textContent = 'Score: 0';
@@ -320,8 +329,8 @@ export class Game {
       this.screenShakeDuration--;
     }
 
-    // Level complete check
-    if (this.obstacles.length === 0) {
+    // Level complete check (via score et longueur)
+    if (this.score > this.levelLength / this.levelData.speed) {
       this.levelComplete();
     }
   }
@@ -350,19 +359,58 @@ export class Game {
     // Obstacles
     this.obstacles.forEach(obs => obs.draw(ctx));
 
-    // Player
+    // Player glow
+    const glowIntensity = 20 + 10 * Math.sin(Date.now() / 150);
+    ctx.shadowColor = this.player.isDead ? '#ff0000' : '#00ffff';
+    ctx.shadowBlur = glowIntensity;
     this.player.draw(ctx);
+    ctx.shadowBlur = 0;
 
-    // Particles
-    this.particles.forEach(p => p.draw(ctx));
+    // Particles glow
+    this.particles.forEach(p => {
+      ctx.shadowColor = '#00ffff';
+      ctx.shadowBlur = 15;
+      p.draw(ctx);
+      ctx.shadowBlur = 0;
+    });
 
     ctx.restore();
+
+    // Progress bar
+    this.drawProgressBar();
 
     if (this.isGameOver) {
       this.drawCenteredText('Game Over! Appuie sur R pour rejouer', '#ff4444');
     } else if (this.isLevelComplete) {
       this.drawCenteredText('Niveau terminé ! Appuie sur N pour suivant', '#44ff44');
     }
+  }
+
+  drawProgressBar() {
+    const barWidth = canvas.width * 0.8;
+    const barHeight = 20;
+    const x = (canvas.width - barWidth) / 2;
+    const y = 20;
+
+    // Background bar
+    ctx.fillStyle = '#222';
+    ctx.fillRect(x, y, barWidth, barHeight);
+
+    // Filled part (progression)
+    let progress = Math.min(this.score * this.levelData.speed / this.levelLength, 1);
+    ctx.fillStyle = '#00ffff';
+    ctx.fillRect(x, y, barWidth * progress, barHeight);
+
+    // Border
+    ctx.strokeStyle = '#00ffff';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, barWidth, barHeight);
+
+    // Percentage text
+    ctx.fillStyle = '#00ffff';
+    ctx.font = '16px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${Math.floor(progress * 100)} %`, canvas.width / 2, y + barHeight - 5);
   }
 
   drawCenteredText(text, color) {
