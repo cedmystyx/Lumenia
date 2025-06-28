@@ -1,5 +1,3 @@
-// Export fonction qui retourne un tableau de niveaux avec obstacles précis comme Geometry Dash
-
 export function getLevels() {
   return [
     {
@@ -27,10 +25,10 @@ export function getLevels() {
       obstacles: [
         { type: "spike", x: 350, size: 30 },
         { type: "movingPlatform", x: 500, width: 80, height: 15, range: 150, axis: "horizontal" },
-        { type: "spike", x: 700, size: 30 },
-        { type: "classic", x: 900, width: 30, height: 30 }
+        { type: "movingPlatformSinus", x: 700, width: 70, height: 15, amplitude: 40, frequency: 0.02 },
+        { type: "spike", x: 900, size: 30 },
+        { type: "classic", x: 1100, width: 30, height: 30 }
       ]
     }
-    // Ajoute autant que tu veux pour étendre la difficulté
   ];
 }
