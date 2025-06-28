@@ -20,12 +20,13 @@ body, html {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(255 255 255 / 0.85);
+  background: rgba(255 255 255 / 0.95);
   padding: 40px 60px;
   border-radius: 15px;
   box-shadow: 0 8px 30px rgba(46, 52, 64, 0.3);
   text-align: center;
   width: 320px;
+  z-index: 100;
 }
 
 .hidden {
