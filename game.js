@@ -4,8 +4,35 @@ const levelNameEl = document.getElementById('levelName');
 const messageEl = document.getElementById('message');
 const scoreEl = document.getElementById('score');
 
+class Particle {
+  constructor(x, y, vx, vy, size, color, life) {
+    this.x = x;
+    this.y = y;
+    this.vx = vx;
+    this.vy = vy;
+    this.size = size;
+    this.color = color;
+    this.life = life; // frames restants
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vy += 0.2; // gravité légère particules
+    this.life--;
+  }
+  draw(ctx) {
+    ctx.globalAlpha = Math.max(this.life / 30, 0);
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
 class Player {
-  constructor() {
+  constructor(game) {
+    this.game = game;
     this.width = 30;
     this.height = 30;
     this.x = 50;
@@ -21,6 +48,21 @@ class Player {
     if (this.onGround && !this.isDead) {
       this.vy = this.jumpForce;
       this.onGround = false;
+
+      // Particules au saut
+      for(let i=0; i<10; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 3 + 1;
+        this.game.particles.push(new Particle(
+          this.x + this.width / 2,
+          this.y + this.height,
+          Math.cos(angle) * speed,
+          Math.sin(angle) * speed * -1,
+          2,
+          '#00ffff',
+          30
+        ));
+      }
     }
   }
   update() {
@@ -33,8 +75,11 @@ class Player {
     }
   }
   draw(ctx) {
+    ctx.shadowColor = this.isDead ? '#ff0000' : '#00ffff';
+    ctx.shadowBlur = 15;
     ctx.fillStyle = this.isDead ? '#880000' : this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.shadowBlur = 0;
     ctx.strokeStyle = this.isDead ? '#ff0000' : '#00ffff';
     ctx.lineWidth = 3;
     ctx.strokeRect(this.x, this.y, this.width, this.height);
@@ -54,11 +99,83 @@ class Obstacle {
     this.x -= this.speed;
   }
   draw(ctx) {
+    ctx.shadowColor = '#aa0000';
+    ctx.shadowBlur = 8;
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.shadowBlur = 0;
     ctx.strokeStyle = '#aa0000';
     ctx.lineWidth = 2;
     ctx.strokeRect(this.x, this.y, this.width, this.height);
+  }
+}
+
+// Plateforme mobile
+class MovingPlatform extends Obstacle {
+  constructor(x, width, height, speed, range, axis = 'horizontal') {
+    super(x, width, height, speed);
+    this.startX = x;
+    this.range = range;
+    this.axis = axis;
+    this.direction = 1;
+    this.speedMove = 2;
+    this.startY = this.y;
+    this.color = '#44bbff';
+  }
+  update() {
+    this.x -= this.speed; // scroll vers la gauche
+
+    if (this.axis === 'horizontal') {
+      this.startX += this.speedMove * this.direction;
+      if (this.startX > this.x + this.range || this.startX < this.x) {
+        this.direction *= -1;
+      }
+      this.x = this.startX;
+    } else {
+      this.startY += this.speedMove * this.direction;
+      if (this.startY > this.y + this.range || this.startY < this.y) {
+        this.direction *= -1;
+      }
+      this.y = this.startY;
+    }
+  }
+  draw(ctx) {
+    ctx.shadowColor = '#2299ff';
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#2299ff';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
+  }
+}
+
+// Pics pointus
+class Spike extends Obstacle {
+  constructor(x, size, speed) {
+    super(x, size, size, speed);
+    this.color = '#ff0000';
+    this.size = size;
+    this.y = canvas.height - 40 - size;
+  }
+  update() {
+    this.x -= this.speed;
+  }
+  draw(ctx) {
+    ctx.shadowColor = '#990000';
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = this.color;
+    ctx.strokeStyle = '#660000';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(this.x, this.y + this.size);
+    ctx.lineTo(this.x + this.size / 2, this.y);
+    ctx.lineTo(this.x + this.size, this.y + this.size);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.shadowBlur = 0;
   }
 }
 
@@ -67,8 +184,9 @@ export class Game {
     this.levelIndex = levelIndex;
     this.onGameEnd = onGameEnd;
     this.levelData = null;
-    this.player = new Player();
+    this.player = new Player(this);
     this.obstacles = [];
+    this.particles = [];
     this.isGameOver = false;
     this.isLevelComplete = false;
     this.score = 0;
@@ -77,10 +195,40 @@ export class Game {
 
   init(levelData) {
     this.levelData = levelData;
-    this.player = new Player();
-    this.obstacles = levelData.obstacles.map(
-      x => new Obstacle(x, 30, 30, levelData.speed)
-    );
+    this.player = new Player(this);
+    this.obstacles = [];
+
+    levelData.obstacles.forEach(obsData => {
+      switch(obsData.type) {
+        case 'movingPlatform':
+          this.obstacles.push(new MovingPlatform(
+            obsData.x,
+            obsData.width || 60,
+            obsData.height || 15,
+            levelData.speed,
+            obsData.range || 100,
+            obsData.axis || 'horizontal'
+          ));
+          break;
+        case 'spike':
+          this.obstacles.push(new Spike(
+            obsData.x,
+            obsData.size || 30,
+            levelData.speed
+          ));
+          break;
+        default:
+          this.obstacles.push(new Obstacle(
+            obsData.x,
+            obsData.width || 30,
+            obsData.height || 30,
+            levelData.speed
+          ));
+      }
+    });
+
+    this.particles = [];
+
     this.isGameOver = false;
     this.isLevelComplete = false;
     this.score = 0;
@@ -115,13 +263,20 @@ export class Game {
 
   update() {
     this.player.update();
+
     for (const obs of this.obstacles) {
       obs.update();
       if (this.checkCollision(this.player, obs)) {
         this.gameOver();
       }
     }
+
     this.obstacles = this.obstacles.filter(o => o.x + o.width > 0);
+
+    // Update particules
+    this.particles = this.particles.filter(p => p.life > 0);
+    this.particles.forEach(p => p.update());
+
     this.score++;
     scoreEl.textContent = `Score: ${this.score}`;
 
@@ -143,6 +298,9 @@ export class Game {
     for (const obs of this.obstacles) {
       obs.draw(ctx);
     }
+
+    // Draw particles
+    this.particles.forEach(p => p.draw(ctx));
 
     // Draw player
     this.player.draw(ctx);
