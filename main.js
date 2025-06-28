@@ -1,7 +1,3 @@
-// ---------------------
-// Variables & setup
-// ---------------------
-
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const menu = document.getElementById("menu");
@@ -15,331 +11,177 @@ const hud = document.getElementById("hud");
 const scoreEl = document.getElementById("score");
 const lifeEl = document.getElementById("life");
 const bgMusic = document.getElementById("bgMusic");
-const shootSound = document.getElementById("shootSound");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const gravity = 1.3;
-const groundY = canvas.height - 100;
+const gravity = 1.2;
+const groundY = canvas.height - 80;
 
 let score = 0;
 let life = 3;
-let currentLevel = 0;
 let gameRunning = false;
 let paused = false;
-let scrollSpeed = 3;
+let scrollX = 0;
 let levelLengthPx = 0;
 let levelStartTime = 0;
-
-// ---------------
-// Classes
-// ---------------
+let currentLevel = 0;
 
 class Player {
   constructor() {
-    this.width = 50;
-    this.height = 50;
+    this.width = 40;
+    this.height = 40;
     this.x = 100;
     this.y = groundY - this.height;
-    this.color = "deepskyblue";
     this.dy = 0;
     this.jumping = false;
     this.onGround = true;
-    this.bullets = [];
+    this.color = "#22aaff";
   }
-
   jump() {
-    if (!this.jumping && this.onGround) {
-      this.jumping = true;
+    if (this.onGround) {
       this.dy = -18;
+      this.jumping = true;
       this.onGround = false;
     }
   }
-
   update() {
-    if (this.jumping) {
-      this.dy += gravity;
-      this.y += this.dy;
-      if (this.y >= groundY - this.height) {
-        this.y = groundY - this.height;
-        this.jumping = false;
-        this.dy = 0;
-        this.onGround = true;
-      }
+    this.dy += gravity;
+    this.y += this.dy;
+    if (this.y > groundY - this.height) {
+      this.y = groundY - this.height;
+      this.dy = 0;
+      this.jumping = false;
+      this.onGround = true;
     }
-    // Bullets movement
-    this.bullets.forEach(b => b.update());
-    this.bullets = this.bullets.filter(b => b.x < canvas.width);
   }
-
   draw() {
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
-    // Bullets
-    ctx.fillStyle = "orange";
-    this.bullets.forEach(b => b.draw());
-  }
-
-  shoot() {
-    shootSound.currentTime = 0;
-    shootSound.play();
-    this.bullets.push(new Bullet(this.x + this.width, this.y + this.height / 2));
   }
 }
 
-class Bullet {
-  constructor(x, y) {
+class Obstacle {
+  constructor(x, w, h) {
     this.x = x;
-    this.y = y;
-    this.w = 10;
-    this.h = 5;
-    this.dx = 10;
-  }
-  update() {
-    this.x += this.dx;
-  }
-  draw() {
-    ctx.fillRect(this.x, this.y, this.w, this.h);
-  }
-}
-
-class Platform {
-  constructor(x, y, w, h) {
-    this.x = x;
-    this.y = y;
+    this.y = groundY - h;
     this.w = w;
     this.h = h;
+    this.color = "#ee4444";
   }
   draw(scrollX) {
     let px = this.x - scrollX;
     if (px + this.w > 0 && px < canvas.width) {
-      ctx.fillStyle = "#ffffffcc";
+      ctx.fillStyle = this.color;
       ctx.fillRect(px, this.y, this.w, this.h);
     }
   }
-}
-
-class Enemy {
-  constructor(x, y, w, h) {
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-    this.alive = true;
-  }
-  draw(scrollX) {
-    let ex = this.x - scrollX;
-    if (ex + this.w > 0 && ex < canvas.width && this.alive) {
-      ctx.fillStyle = "crimson";
-      ctx.fillRect(ex, this.y, this.w, this.h);
-    }
+  collide(player) {
+    let px = this.x - scrollX;
+    return (
+      player.x < px + this.w &&
+      player.x + player.width > px &&
+      player.y < this.y + this.h &&
+      player.y + player.height > this.y
+    );
   }
 }
 
-// ---------------
-// Level data
-// ---------------
+// On génère 10 niveaux avec difficulté croissante
+const levels = [];
 
-const levels = [
-  {
-    name: "Zephyros Doux",
-    music: "assets/sounds/music1.mp3",
-    scrollSpeed: 3,
-    durationSec: 210,
-    platforms: [
-      new Platform(300, groundY - 80, 200, 20),
-      new Platform(650, groundY - 120, 150, 20),
-      new Platform(900, groundY - 100, 200, 20),
-      new Platform(1200, groundY - 130, 150, 20)
-    ],
-    enemies: [
-      new Enemy(700, groundY - 50, 40, 40),
-      new Enemy(1100, groundY - 50, 40, 40)
-    ]
-  },
-  {
-    name: "Brise Légère",
-    music: "assets/sounds/music2.mp3",
-    scrollSpeed: 3.5,
-    durationSec: 240,
-    platforms: [
-      new Platform(250, groundY - 100, 160, 20),
-      new Platform(520, groundY - 140, 180, 20),
-      new Platform(800, groundY - 110, 220, 20),
-      new Platform(1150, groundY - 150, 180, 20)
-    ],
-    enemies: [
-      new Enemy(600, groundY - 50, 40, 40),
-      new Enemy(1000, groundY - 50, 40, 40),
-      new Enemy(1300, groundY - 50, 40, 40)
-    ]
+for (let i = 1; i <= 10; i++) {
+  let speed = 2 + i * 0.6; // vitesse de scroll qui augmente
+  let durationSec = 180 + i * 15; // durée ~ 3min+ par niveau
+  let name = `Niveau ${i} - Lumenia`;
+  let music = `https://cdn.pixabay.com/download/audio/2021/10/15/audio_1a4e9e6d42.mp3?filename=fast-beat-1522.mp3`; // même musique par défaut, tu peux changer
+
+  // Génère obstacles aléatoires mais cohérents
+  let obstacles = [];
+  let posX = 600;
+  while (posX < speed * durationSec * 60) {
+    let height = 40 + Math.floor(Math.random() * 80);
+    let width = 30 + Math.floor(Math.random() * 20);
+    obstacles.push(new Obstacle(posX, width, height));
+    posX += 200 + Math.floor(Math.random() * 300) - i * 5; // plus serré et rapide au fil des niveaux
+    if (posX < 0) posX = 600;
   }
-];
 
-// ---------------
-// Game variables
-// ---------------
+  levels.push({
+    name,
+    music,
+    scrollSpeed: speed,
+    durationSec,
+    obstacles
+  });
+}
 
 let player = new Player();
-let platforms = [];
-let enemies = [];
-let clouds = [];
-let levelLengthPx = 0;
-let levelStartTime = 0;
 
-// ---------------
-// Clouds for ambience
-// ---------------
-
-function initClouds() {
-  clouds = Array.from({ length: 12 }, () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * 150,
-    w: 120 + Math.random() * 100,
-    h: 50,
-    dx: 0.3 + Math.random() * 0.3
-  }));
-}
-
-function drawClouds() {
-  clouds.forEach(c => {
-    c.x -= c.dx;
-    if (c.x + c.w < 0) c.x = canvas.width + Math.random() * 200;
-    ctx.fillStyle = "#ffffffbb";
-    ctx.fillRect(c.x, c.y, c.w, c.h);
-  });
-}
-
-// ---------------
-// Level setup
-// ---------------
-
-function setupLevel(level) {
-  scrollSpeed = level.scrollSpeed;
-  platforms = level.platforms;
-  enemies = level.enemies;
-  levelLengthPx = scrollSpeed * level.durationSec + canvas.width;
-  levelStartTime = performance.now();
+function resetGame(level) {
   score = 0;
   life = 3;
+  scrollX = 0;
+  levelLengthPx = levels[level].scrollSpeed * levels[level].durationSec * 60; // assuming 60 FPS
   player = new Player();
-  initClouds();
-  scoreEl.textContent = "Score: 0";
-  lifeEl.textContent = "Vie: " + "♥".repeat(life);
+  scoreEl.textContent = `Score: ${score}`;
+  lifeEl.textContent = `Vie: ${"♥".repeat(life)}`;
+  bgMusic.src = levels[level].music;
+  bgMusic.play();
 }
 
-// ---------------
-// Collision detection helper (AABB)
-function checkCollision(rect1, rect2) {
-  return (
-    rect1.x < rect2.x + rect2.w &&
-    rect1.x + rect1.width > rect2.x &&
-    rect1.y < rect2.y + rect2.h &&
-    rect1.y + rect1.height > rect2.y
-  );
-}
-
-// ---------------
-// Platform collision
-function checkPlatformCollision() {
-  player.onGround = false;
-  platforms.forEach(plat => {
-    let platRect = { x: plat.x - scrollX, y: plat.y, width: plat.w, height: plat.h };
-    let playerRect = { x: player.x, y: player.y, width: player.width, height: player.height };
-
-    // On vérifie si le player atterrit sur la plateforme (en Y seulement)
-    if (
-      player.x + player.width > platRect.x &&
-      player.x < platRect.x + platRect.width &&
-      player.y + player.height <= platRect.y + 10 &&
-      player.y + player.height + player.dy >= platRect.y
-    ) {
-      player.y = platRect.y - player.height;
-      player.dy = 0;
-      player.jumping = false;
-      player.onGround = true;
-    }
-  });
-}
-
-// ---------------
-// Ennemis & tirs
-function checkBulletEnemyCollision() {
-  player.bullets.forEach(bullet => {
-    enemies.forEach(enemy => {
-      if (!enemy.alive) return;
-      let enemyRect = { x: enemy.x - scrollX, y: enemy.y, width: enemy.w, height: enemy.h };
-      let bulletRect = { x: bullet.x, y: bullet.y, width: bullet.w, height: bullet.h };
-
-      if (
-        bulletRect.x < enemyRect.x + enemyRect.width &&
-        bulletRect.x + bulletRect.width > enemyRect.x &&
-        bulletRect.y < enemyRect.y + enemyRect.height &&
-        bulletRect.y + bulletRect.height > enemyRect.y
-      ) {
-        enemy.alive = false;
-        bullet.x = canvas.width + 1;
-        score += 100;
-        scoreEl.textContent = "Score: " + score;
-      }
-    });
-  });
-}
-
-// ---------------
-// Variables pour défilement & timer
-let scrollX = 0;
-
-// ---------------
-// Main update loop
 function update() {
   if (!gameRunning || paused) {
     requestAnimationFrame(update);
     return;
   }
 
-  // Efface canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Dessine nuages
-  drawClouds();
-
-  // Calcule scroll (décalage du niveau)
-  let elapsed = (performance.now() - levelStartTime) / 1000;
-  scrollX = scrollSpeed * elapsed;
-
-  // Dessine sol
-  ctx.fillStyle = "#28284d";
+  // Background ground
+  ctx.fillStyle = "#222244";
   ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
 
-  // Dessine plateformes
-  platforms.forEach(p => p.draw(scrollX));
+  // Move scrollX
+  let elapsed = (performance.now() - levelStartTime) / 1000;
+  scrollX = levels[currentLevel].scrollSpeed * elapsed * 60;
 
-  // Dessine ennemis
-  enemies.forEach(e => e.draw(scrollX));
+  // Draw obstacles
+  levels[currentLevel].obstacles.forEach(obs => obs.draw(scrollX));
 
-  // Mise à jour joueur
+  // Update & draw player
   player.update();
-
-  // Check collisions plateformes
-  checkPlatformCollision();
-
-  // Check collisions bullets/ennemis
-  checkBulletEnemyCollision();
-
-  // Dessine joueur
   player.draw();
 
-  // Affiche HUD
-  scoreEl.textContent = "Score: " + score;
-  lifeEl.textContent = "Vie: " + "♥".repeat(life);
+  // Collision check
+  for (let obs of levels[currentLevel].obstacles) {
+    if (obs.collide(player)) {
+      life--;
+      lifeEl.textContent = `Vie: ${"♥".repeat(life)}`;
+      // Reset player position on hit
+      player.y = groundY - player.height;
+      player.dy = 0;
+      if (life <= 0) {
+        alert("Game Over ! Essaie encore !");
+        gameRunning = false;
+        bgMusic.pause();
+        showLevelMenu();
+        canvas.style.display = "none";
+        hud.classList.add("hidden");
+        return;
+      }
+    }
+  }
 
-  // Vérifie fin niveau
+  // Score update
+  score = Math.floor(scrollX / 10);
+  scoreEl.textContent = `Score: ${score}`;
+
+  // Level end condition
   if (scrollX >= levelLengthPx) {
+    alert("Bravo, niveau terminé !");
     gameRunning = false;
     bgMusic.pause();
-    alert("Bravo, tu as terminé le niveau ! 🎉");
     showLevelMenu();
     canvas.style.display = "none";
     hud.classList.add("hidden");
@@ -349,12 +191,10 @@ function update() {
   requestAnimationFrame(update);
 }
 
-// ---------------
-// Input handling
+// Inputs
 window.addEventListener("keydown", e => {
-  if (!gameRunning) return;
-
-  if (e.code === "Space") {
+  if (!gameRunning || paused) return;
+  if (e.code === "Space" || e.code === "ArrowUp") {
     player.jump();
   } else if (e.code === "KeyP") {
     togglePause();
@@ -362,11 +202,9 @@ window.addEventListener("keydown", e => {
 });
 
 window.addEventListener("click", () => {
-  if (gameRunning && !paused) player.shoot();
+  if (gameRunning && !paused) player.jump();
 });
 
-// ---------------
-// Pause menu
 function togglePause() {
   if (!gameRunning) return;
   paused = !paused;
@@ -381,8 +219,7 @@ function togglePause() {
   }
 }
 
-// ---------------
-// Menu gestion
+// Menu handling
 function showLevelMenu() {
   menu.classList.add("hidden");
   pauseMenu.classList.add("hidden");
@@ -399,28 +236,19 @@ function showLevelMenu() {
 
 function startGame(levelIndex) {
   currentLevel = levelIndex;
-  const lvl = levels[levelIndex];
-  setupLevel(lvl);
-
-  bgMusic.src = lvl.music;
-  bgMusic.play();
-
+  resetGame(levelIndex);
   levelMenu.classList.add("hidden");
   menu.classList.add("hidden");
   pauseMenu.classList.add("hidden");
   canvas.style.display = "block";
   hud.classList.remove("hidden");
-
   gameRunning = true;
   paused = false;
   levelStartTime = performance.now();
-  scrollX = 0;
-
-  update();
+  requestAnimationFrame(update);
 }
 
-// ---------------
-// Boutons menu
+// Buttons event listeners
 document.getElementById("playBtn").addEventListener("click", showLevelMenu);
 backBtn.addEventListener("click", () => {
   levelMenu.classList.add("hidden");
@@ -437,8 +265,7 @@ quitBtn.addEventListener("click", () => {
   menu.classList.remove("hidden");
 });
 
-// ---------------
-// Resize canvas adaptatif
+// Responsive canvas
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
