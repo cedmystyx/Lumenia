@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,15 +7,31 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="game-container">
-    <canvas id="gameCanvas" width="900" height="300"></canvas>
-    <div id="ui">
-      <div id="levelName"></div>
-      <div id="message"></div>
-      <div id="score"></div>
-    </div>
+  <div id="app">
+    <!-- Menu d'accueil -->
+    <section id="start-menu" class="menu active">
+      <h1>LUMENIA</h1>
+      <button id="start-button">Jouer</button>
+    </section>
+
+    <!-- Menu sélection niveaux -->
+    <section id="level-select-menu" class="menu">
+      <h2>Sélection du niveau</h2>
+      <div id="level-list"></div>
+      <button id="back-to-start">Retour</button>
+    </section>
+
+    <!-- Conteneur du jeu -->
+    <section id="game-section" class="menu">
+      <canvas id="gameCanvas" width="900" height="300"></canvas>
+      <div id="game-ui">
+        <div id="levelName"></div>
+        <div id="message"></div>
+        <div id="score"></div>
+        <button id="exit-game">Quitter</button>
+      </div>
+    </section>
   </div>
-  <audio id="bgMusic" src="music.mp3" loop></audio>
-  <script src="main.js"></script>
+  <script type="module" src="main.js"></script>
 </body>
 </html>
