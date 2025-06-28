@@ -87,34 +87,190 @@ class Obstacle {
   }
 }
 
-// On génère 10 niveaux avec difficulté croissante
-const levels = [];
-
-for (let i = 1; i <= 10; i++) {
-  let speed = 2 + i * 0.6; // vitesse de scroll qui augmente
-  let durationSec = 180 + i * 15; // durée ~ 3min+ par niveau
-  let name = `Niveau ${i} - Lumenia`;
-  let music = `https://cdn.pixabay.com/download/audio/2021/10/15/audio_1a4e9e6d42.mp3?filename=fast-beat-1522.mp3`; // même musique par défaut, tu peux changer
-
-  // Génère obstacles aléatoires mais cohérents
-  let obstacles = [];
-  let posX = 600;
-  while (posX < speed * durationSec * 60) {
-    let height = 40 + Math.floor(Math.random() * 80);
-    let width = 30 + Math.floor(Math.random() * 20);
-    obstacles.push(new Obstacle(posX, width, height));
-    posX += 200 + Math.floor(Math.random() * 300) - i * 5; // plus serré et rapide au fil des niveaux
-    if (posX < 0) posX = 600;
+const levels = [
+  // Niveau 1: Stereo Madness (facile)
+  {
+    name: "Stereo Madness",
+    music: "https://cdn.pixabay.com/download/audio/2022/03/21/audio_4a3a9f9362.mp3?filename=video-game-intro-loop-12996.mp3",
+    scrollSpeed: 2,
+    durationSec: 180,
+    obstacles: [
+      new Obstacle(400, 50, 50),
+      new Obstacle(800, 40, 60),
+      new Obstacle(1200, 60, 40),
+      new Obstacle(1600, 50, 70),
+      new Obstacle(2100, 40, 60),
+      new Obstacle(2600, 80, 50),
+    ]
+  },
+  // Niveau 2: Back On Track (un peu plus dur)
+  {
+    name: "Back On Track",
+    music: "https://cdn.pixabay.com/download/audio/2021/10/23/audio_3cc6f5755e.mp3?filename=fast-techno-loop-1505.mp3",
+    scrollSpeed: 2.3,
+    durationSec: 195,
+    obstacles: [
+      new Obstacle(350, 50, 60),
+      new Obstacle(700, 60, 60),
+      new Obstacle(1100, 40, 40),
+      new Obstacle(1400, 70, 70),
+      new Obstacle(1800, 40, 60),
+      new Obstacle(2300, 50, 50),
+      new Obstacle(2800, 60, 80),
+      new Obstacle(3300, 40, 70),
+    ]
+  },
+  // Niveau 3: Polargeist
+  {
+    name: "Polargeist",
+    music: "https://cdn.pixabay.com/download/audio/2021/10/23/audio_21b48b2850.mp3?filename=techno-beat-1486.mp3",
+    scrollSpeed: 2.6,
+    durationSec: 210,
+    obstacles: [
+      new Obstacle(400, 60, 60),
+      new Obstacle(800, 70, 40),
+      new Obstacle(1150, 40, 70),
+      new Obstacle(1500, 50, 50),
+      new Obstacle(1900, 60, 60),
+      new Obstacle(2400, 80, 50),
+      new Obstacle(2800, 60, 70),
+      new Obstacle(3300, 50, 70),
+      new Obstacle(3700, 40, 60),
+    ]
+  },
+  // Niveau 4: Dry Out
+  {
+    name: "Dry Out",
+    music: "https://cdn.pixabay.com/download/audio/2022/01/21/audio_9a3d24a153.mp3?filename=slow-hip-hop-loop-14399.mp3",
+    scrollSpeed: 2.9,
+    durationSec: 210,
+    obstacles: [
+      new Obstacle(350, 60, 50),
+      new Obstacle(700, 40, 70),
+      new Obstacle(1050, 70, 60),
+      new Obstacle(1450, 60, 60),
+      new Obstacle(1850, 50, 80),
+      new Obstacle(2300, 80, 50),
+      new Obstacle(2700, 60, 70),
+      new Obstacle(3100, 40, 60),
+      new Obstacle(3500, 50, 50),
+    ]
+  },
+  // Niveau 5: Base After Base
+  {
+    name: "Base After Base",
+    music: "https://cdn.pixabay.com/download/audio/2021/09/25/audio_f0220d33de.mp3?filename=fast-happy-electro-11006.mp3",
+    scrollSpeed: 3.2,
+    durationSec: 225,
+    obstacles: [
+      new Obstacle(400, 50, 70),
+      new Obstacle(850, 60, 60),
+      new Obstacle(1300, 40, 70),
+      new Obstacle(1700, 80, 50),
+      new Obstacle(2150, 70, 70),
+      new Obstacle(2600, 60, 60),
+      new Obstacle(3000, 50, 80),
+      new Obstacle(3400, 70, 60),
+      new Obstacle(3800, 40, 70),
+    ]
+  },
+  // Niveau 6: Can't Let Go
+  {
+    name: "Can't Let Go",
+    music: "https://cdn.pixabay.com/download/audio/2022/02/03/audio_7baffc2c8b.mp3?filename=slow-techno-13888.mp3",
+    scrollSpeed: 3.5,
+    durationSec: 240,
+    obstacles: [
+      new Obstacle(350, 60, 70),
+      new Obstacle(750, 40, 80),
+      new Obstacle(1200, 80, 60),
+      new Obstacle(1600, 50, 70),
+      new Obstacle(2000, 70, 80),
+      new Obstacle(2500, 60, 70),
+      new Obstacle(2900, 40, 70),
+      new Obstacle(3300, 70, 60),
+      new Obstacle(3700, 80, 50),
+      new Obstacle(4100, 40, 70),
+    ]
+  },
+  // Niveau 7: Jumper
+  {
+    name: "Jumper",
+    music: "https://cdn.pixabay.com/download/audio/2022/02/16/audio_1473ae1f17.mp3?filename=video-game-loop-14170.mp3",
+    scrollSpeed: 3.8,
+    durationSec: 240,
+    obstacles: [
+      new Obstacle(400, 70, 60),
+      new Obstacle(850, 40, 70),
+      new Obstacle(1300, 60, 80),
+      new Obstacle(1750, 70, 70),
+      new Obstacle(2200, 40, 60),
+      new Obstacle(2600, 80, 50),
+      new Obstacle(3000, 60, 80),
+      new Obstacle(3400, 50, 60),
+      new Obstacle(3800, 70, 70),
+      new Obstacle(4200, 40, 60),
+    ]
+  },
+  // Niveau 8: Time Machine
+  {
+    name: "Time Machine",
+    music: "https://cdn.pixabay.com/download/audio/2021/10/22/audio_bcaea23309.mp3?filename=dark-techno-loop-1476.mp3",
+    scrollSpeed: 4.1,
+    durationSec: 255,
+    obstacles: [
+      new Obstacle(350, 60, 80),
+      new Obstacle(750, 40, 70),
+      new Obstacle(1200, 70, 60),
+      new Obstacle(1650, 50, 70),
+      new Obstacle(2100, 80, 50),
+      new Obstacle(2550, 70, 70),
+      new Obstacle(3000, 40, 60),
+      new Obstacle(3450, 50, 70),
+      new Obstacle(3900, 60, 60),
+      new Obstacle(4350, 80, 50),
+    ]
+  },
+  // Niveau 9: Cycles
+  {
+    name: "Cycles",
+    music: "https://cdn.pixabay.com/download/audio/2021/10/23/audio_bfc524b4e7.mp3?filename=hip-hop-beat-1488.mp3",
+    scrollSpeed: 4.4,
+    durationSec: 270,
+    obstacles: [
+      new Obstacle(400, 50, 60),
+      new Obstacle(850, 70, 70),
+      new Obstacle(1300, 40, 80),
+      new Obstacle(1750, 60, 70),
+      new Obstacle(2200, 50, 60),
+      new Obstacle(2650, 70, 70),
+      new Obstacle(3100, 40, 80),
+      new Obstacle(3550, 60, 70),
+      new Obstacle(4000, 50, 60),
+      new Obstacle(4450, 70, 70),
+    ]
+  },
+  // Niveau 10: xStep (dur)
+  {
+    name: "xStep",
+    music: "https://cdn.pixabay.com/download/audio/2021/10/22/audio_c3c7e69f27.mp3?filename=techno-1283.mp3",
+    scrollSpeed: 4.7,
+    durationSec: 300,
+    obstacles: [
+      new Obstacle(350, 70, 80),
+      new Obstacle(750, 40, 70),
+      new Obstacle(1200, 80, 60),
+      new Obstacle(1650, 60, 80),
+      new Obstacle(2100, 50, 70),
+      new Obstacle(2550, 70, 80),
+      new Obstacle(3000, 40, 70),
+      new Obstacle(3450, 60, 60),
+      new Obstacle(3900, 80, 80),
+      new Obstacle(4350, 50, 70),
+      new Obstacle(4800, 70, 60),
+    ]
   }
-
-  levels.push({
-    name,
-    music,
-    scrollSpeed: speed,
-    durationSec,
-    obstacles
-  });
-}
+];
 
 let player = new Player();
 
@@ -138,134 +294,124 @@ function update() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Background ground
-  ctx.fillStyle = "#222244";
+  // Draw ground
+  ctx.fillStyle = "#29214e";
   ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
 
-  // Move scrollX
-  let elapsed = (performance.now() - levelStartTime) / 1000;
-  scrollX = levels[currentLevel].scrollSpeed * elapsed * 60;
+  // Scroll
+  scrollX += levels[currentLevel].scrollSpeed;
 
-  // Draw obstacles
-  levels[currentLevel].obstacles.forEach(obs => obs.draw(scrollX));
-
-  // Update & draw player
-  player.update();
-  player.draw();
-
-  // Collision check
+  // Draw obstacles & check collision
+  let collided = false;
   for (let obs of levels[currentLevel].obstacles) {
-    if (obs.collide(player)) {
-      life--;
-      lifeEl.textContent = `Vie: ${"♥".repeat(life)}`;
-      // Reset player position on hit
-      player.y = groundY - player.height;
-      player.dy = 0;
-      if (life <= 0) {
-        alert("Game Over ! Essaie encore !");
-        gameRunning = false;
-        bgMusic.pause();
-        showLevelMenu();
-        canvas.style.display = "none";
-        hud.classList.add("hidden");
-        return;
-      }
-    }
+    obs.draw(scrollX);
+    if (obs.collide(player)) collided = true;
   }
 
-  // Score update
+  // Update player
+  player.update();
+
+  // Collision consequences
+  if (collided) {
+    life--;
+    lifeEl.textContent = `Vie: ${"♥".repeat(life)}`;
+    if (life <= 0) {
+      alert("Game Over !");
+      stopGame();
+      return;
+    }
+    // Knockback player on collision
+    player.dy = -10;
+    player.y -= 10;
+  }
+
+  // Draw player
+  player.draw();
+
+  // Update score based on scroll
   score = Math.floor(scrollX / 10);
   scoreEl.textContent = `Score: ${score}`;
 
-  // Level end condition
+  // Check level end
   if (scrollX >= levelLengthPx) {
-    alert("Bravo, niveau terminé !");
-    gameRunning = false;
-    bgMusic.pause();
-    showLevelMenu();
-    canvas.style.display = "none";
-    hud.classList.add("hidden");
-    return;
+    alert(`Bravo ! Tu as fini le niveau : ${levels[currentLevel].name}`);
+    stopGame();
   }
 
   requestAnimationFrame(update);
 }
 
-// Inputs
-window.addEventListener("keydown", e => {
-  if (!gameRunning || paused) return;
-  if (e.code === "Space" || e.code === "ArrowUp") {
-    player.jump();
-  } else if (e.code === "KeyP") {
-    togglePause();
-  }
-});
-
-window.addEventListener("click", () => {
-  if (gameRunning && !paused) player.jump();
-});
-
-function togglePause() {
-  if (!gameRunning) return;
-  paused = !paused;
-  if (paused) {
-    bgMusic.pause();
-    pauseMenu.classList.remove("hidden");
-    hud.classList.add("hidden");
-  } else {
-    bgMusic.play();
-    pauseMenu.classList.add("hidden");
-    hud.classList.remove("hidden");
-  }
+function stopGame() {
+  gameRunning = false;
+  bgMusic.pause();
+  hud.classList.add("hidden");
+  canvas.style.display = "none";
+  menu.style.display = "block";
+  levelMenu.classList.add("hidden");
+  pauseMenu.classList.add("hidden");
 }
 
-// Menu handling
-function showLevelMenu() {
-  menu.classList.add("hidden");
+function startLevel(level) {
+  currentLevel = level;
+  resetGame(level);
+  gameRunning = true;
+  paused = false;
+  menu.style.display = "none";
+  levelMenu.classList.add("hidden");
   pauseMenu.classList.add("hidden");
-  hud.classList.add("hidden");
+  hud.classList.remove("hidden");
+  canvas.style.display = "block";
+  canvas.focus();
+  update();
+}
+
+// Event Listeners
+
+document.getElementById("playBtn").addEventListener("click", () => {
+  menu.style.display = "none";
   levelMenu.classList.remove("hidden");
   levelsList.innerHTML = "";
   levels.forEach((lvl, i) => {
-    let btn = document.createElement("button");
-    btn.textContent = lvl.name;
-    btn.onclick = () => startGame(i);
+    const btn = document.createElement("button");
+    btn.textContent = `${i + 1}. ${lvl.name}`;
+    btn.addEventListener("click", () => startLevel(i));
     levelsList.appendChild(btn);
   });
-}
+});
 
-function startGame(levelIndex) {
-  currentLevel = levelIndex;
-  resetGame(levelIndex);
-  levelMenu.classList.add("hidden");
-  menu.classList.add("hidden");
-  pauseMenu.classList.add("hidden");
-  canvas.style.display = "block";
-  hud.classList.remove("hidden");
-  gameRunning = true;
-  paused = false;
-  levelStartTime = performance.now();
-  requestAnimationFrame(update);
-}
-
-// Buttons event listeners
-document.getElementById("playBtn").addEventListener("click", showLevelMenu);
 backBtn.addEventListener("click", () => {
   levelMenu.classList.add("hidden");
-  menu.classList.remove("hidden");
-});
-resumeBtn.addEventListener("click", togglePause);
-quitBtn.addEventListener("click", () => {
-  gameRunning = false;
-  paused = false;
-  bgMusic.pause();
-  pauseMenu.classList.add("hidden");
-  hud.classList.add("hidden");
-  canvas.style.display = "none";
-  menu.classList.remove("hidden");
+  menu.style.display = "block";
 });
 
-// Responsive canvas
+resumeBtn.addEventListener("click", () => {
+  paused = false;
+  pauseMenu.classList.add("hidden");
+});
+
+quitBtn.addEventListener("click", () => {
+  stopGame();
+});
+
+window.addEventListener("keydown", (e) => {
+  if (!gameRunning) return;
+
+  if (e.code === "Space" || e.code === "ArrowUp") {
+    e.preventDefault();
+    player.jump();
+  }
+
+  if (e.code === "Escape") {
+    if (!paused) {
+      paused = true;
+      pauseMenu.classList.remove("hidden");
+    } else {
+      paused = false;
+      pauseMenu.classList.add("hidden");
+    }
+  }
+});
+
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
