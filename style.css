@@ -1,4 +1,4 @@
-/* Reset & basics */
+/* Reset */
 * {
   margin: 0; padding: 0; box-sizing: border-box;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -6,9 +6,9 @@
 }
 body, html {
   width: 100%; height: 100%;
-  background: linear-gradient(to bottom, #88c0d0, #81a1c1);
+  background: linear-gradient(to bottom, #120d22, #0b0716);
   overflow: hidden;
-  color: #2e3440;
+  color: #eee;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,12 +20,12 @@ body, html {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(255 255 255 / 0.95);
+  background: rgba(18, 13, 34, 0.95);
   padding: 40px 60px;
   border-radius: 15px;
-  box-shadow: 0 8px 30px rgba(46, 52, 64, 0.3);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.8);
   text-align: center;
-  width: 320px;
+  width: 340px;
   z-index: 100;
 }
 
@@ -35,24 +35,24 @@ body, html {
 
 h1 {
   font-size: 3rem;
-  color: #5e81ac;
+  color: #a25dff;
   margin-bottom: 30px;
   letter-spacing: 2px;
-  text-shadow: 0 2px 6px #4c566a;
+  text-shadow: 0 0 10px #a25dff;
 }
 
 h2 {
   font-size: 2rem;
   margin-bottom: 25px;
-  color: #434c5e;
+  color: #c4b9ff;
 }
 
 /* Buttons */
 button {
   cursor: pointer;
   border: none;
-  background: #5e81ac;
-  color: #eceff4;
+  background: #8c67ff;
+  color: #f0eaff;
   font-weight: 700;
   font-size: 1.2rem;
   padding: 15px 30px;
@@ -60,22 +60,22 @@ button {
   display: block;
   border-radius: 50px;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 5px 15px rgba(94, 129, 172, 0.5);
+  box-shadow: 0 5px 15px rgba(140, 103, 255, 0.5);
   user-select: none;
   width: 100%;
 }
 
 button:hover {
-  background: #81a1c1;
+  background: #a17cff;
   transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(129, 161, 193, 0.7);
+  box-shadow: 0 8px 20px rgba(161, 124, 255, 0.7);
 }
 
 /* Levels list */
 #levelsList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   max-height: 320px;
   overflow-y: auto;
   margin-bottom: 15px;
@@ -84,15 +84,15 @@ button:hover {
 #levelsList button {
   font-size: 1rem;
   padding: 12px;
-  background: #81a1c1;
+  background: #a17cff;
   box-shadow: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: 600;
   transition: background-color 0.25s ease;
 }
 
 #levelsList button:hover {
-  background: #5e81ac;
+  background: #8c67ff;
 }
 
 /* HUD */
@@ -102,8 +102,8 @@ button:hover {
   left: 12px;
   font-weight: 700;
   font-size: 1.25rem;
-  color: #eceff4;
-  text-shadow: 0 0 8px #2e3440;
+  color: #d4c6ff;
+  text-shadow: 0 0 8px #311a85;
   display: flex;
   gap: 25px;
   user-select: none;
@@ -117,6 +117,6 @@ canvas#gameCanvas {
   top: 0; left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(to top, #88c0d0, #81a1c1);
+  background: linear-gradient(to top, #1a1436, #3a298a);
   cursor: crosshair;
 }
