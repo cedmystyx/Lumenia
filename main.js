@@ -1,147 +1,121 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-const scoreEl = document.getElementById("score");
-const lifeEl = document.getElementById("life");
-const menu = document.getElementById("menu");
-const hud = document.getElementById("hud");
-const bgMusic = document.getElementById("bgMusic");
-const shootSound = document.getElementById("shootSound");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let gravity = 1;
-let ground = canvas.height - 100;
-
-let gameRunning = false;
-let score = 0;
-let life = 3;
-
-// Nuages
-let clouds = Array.from({length: 10}, (_, i) => ({
-  x: Math.random() * canvas.width,
-  y: Math.random() * 200,
-  w: 100 + Math.random() * 100,
-  h: 50,
-  dx: 0.2 + Math.random() * 0.3
-}));
-
-let player = {
-  x: 100,
-  y: ground,
-  width: 50,
-  height: 50,
-  color: "deepskyblue",
-  dy: 0,
-  dx: 0,
-  speed: 5,
-  jumping: false,
-  bullets: []
-};
-
-let platforms = [
-  { x: 200, y: ground - 100, w: 150, h: 20 },
-  { x: 450, y: ground - 200, w: 200, h: 20 },
-  { x: 800, y: ground - 150, w: 150, h: 20 }
-];
-
-let enemies = [
-  { x: 600, y: ground - 50, w: 40, h: 40, alive: true }
-];
-
-let keys = {};
-window.addEventListener("keydown", e => keys[e.code] = true);
-window.addEventListener("keyup", e => keys[e.code] = false);
-window.addEventListener("click", () => {
-  if (!gameRunning) return;
-  shootSound.currentTime = 0;
-  shootSound.play();
-  player.bullets.push({
-    x: player.x + player.width,
-    y: player.y + player.height / 2,
-    w: 10,
-    h: 5,
-    dx: 10
-  });
-});
-
-function startGame() {
-  menu.style.display = "none";
-  canvas.style.display = "block";
-  hud.style.display = "flex";
-  bgMusic.play();
-  gameRunning = true;
-  update();
+/* Reset & basics */
+* {
+  margin: 0; padding: 0; box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+}
+body, html {
+  width: 100%; height: 100%;
+  background: linear-gradient(to bottom, #88c0d0, #81a1c1);
+  overflow: hidden;
+  color: #2e3440;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
-function update() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+/* Centered containers */
+.centered {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255 255 255 / 0.85);
+  padding: 40px 60px;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(46, 52, 64, 0.3);
+  text-align: center;
+  width: 320px;
+}
 
-  // Nuages
-  for (let c of clouds) {
-    c.x += c.dx;
-    if (c.x > canvas.width) c.x = -c.w;
-    ctx.fillStyle = "#ffffffaa";
-    ctx.fillRect(c.x, c.y, c.w, c.h);
-  }
+.hidden {
+  display: none !important;
+}
 
-  player.dx = 0;
-  if (keys["ArrowRight"]) player.dx = player.speed;
-  if (keys["ArrowLeft"]) player.dx = -player.speed;
-  if (keys["Space"] && !player.jumping) {
-    player.dy = -20;
-    player.jumping = true;
-  }
+h1 {
+  font-size: 3rem;
+  color: #5e81ac;
+  margin-bottom: 30px;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 6px #4c566a;
+}
 
-  player.x += player.dx;
-  player.dy += gravity;
-  player.y += player.dy;
+h2 {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #434c5e;
+}
 
-  if (player.y + player.height >= ground) {
-    player.y = ground - player.height;
-    player.dy = 0;
-    player.jumping = false;
-  }
+/* Buttons */
+button {
+  cursor: pointer;
+  border: none;
+  background: #5e81ac;
+  color: #eceff4;
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 15px 30px;
+  margin: 10px auto;
+  display: block;
+  border-radius: 50px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 5px 15px rgba(94, 129, 172, 0.5);
+  user-select: none;
+  width: 100%;
+}
 
-  for (let plat of platforms) {
-    if (player.x < plat.x + plat.w &&
-        player.x + player.width > plat.x &&
-        player.y + player.height < plat.y + plat.h &&
-        player.y + player.height + player.dy >= plat.y) {
-      player.y = plat.y - player.height;
-      player.dy = 0;
-      player.jumping = false;
-    }
-  }
+button:hover {
+  background: #81a1c1;
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(129, 161, 193, 0.7);
+}
 
-  for (let b of player.bullets) b.x += b.dx;
-  player.bullets = player.bullets.filter(b => b.x < canvas.width);
+/* Levels list */
+#levelsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 320px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
 
-  for (let e of enemies) {
-    for (let b of player.bullets) {
-      if (b.x < e.x + e.w && b.x + b.w > e.x && b.y < e.y + e.h && b.y + b.h > e.y) {
-        e.alive = false;
-        b.x = canvas.width + 1;
-        score += 100;
-        scoreEl.textContent = "Score: " + score;
-      }
-    }
-  }
+#levelsList button {
+  font-size: 1rem;
+  padding: 12px;
+  background: #81a1c1;
+  box-shadow: none;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: background-color 0.25s ease;
+}
 
-  ctx.fillStyle = "#9fc9f3";
-  ctx.fillRect(0, ground, canvas.width, canvas.height - ground);
+#levelsList button:hover {
+  background: #5e81ac;
+}
 
-  ctx.fillStyle = "#ffffffdd";
-  for (let plat of platforms) ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
+/* HUD */
+#hud {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #eceff4;
+  text-shadow: 0 0 8px #2e3440;
+  display: flex;
+  gap: 25px;
+  user-select: none;
+  z-index: 10;
+}
 
-  ctx.fillStyle = player.color;
-  ctx.fillRect(player.x, player.y, player.width, player.height);
-
-  ctx.fillStyle = "orange";
-  for (let b of player.bullets) ctx.fillRect(b.x, b.y, b.w, b.h);
-
-  ctx.fillStyle = "crimson";
-  for (let e of enemies) if (e.alive) ctx.fillRect(e.x, e.y, e.w, e.h);
-
-  requestAnimationFrame(update);
+/* Canvas */
+canvas#gameCanvas {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to top, #88c0d0, #81a1c1);
+  cursor: crosshair;
 }
