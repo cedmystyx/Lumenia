@@ -1,0 +1,41 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #a4e1ff;
+  font-family: sans-serif;
+}
+canvas {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#menu {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom, #a4e1ff, #ffffff);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#menu h1 {
+  font-size: 3em;
+  color: #2266aa;
+}
+#menu button {
+  padding: 1em 2em;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+#hud {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #003366;
+  font-size: 1.2em;
+  display: none;
+  gap: 20px;
+}
