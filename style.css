@@ -1,44 +1,10 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
+  margin: 0;
   background-color: #121212;
   color: #00ffff;
   font-family: 'Arial', sans-serif;
   text-align: center;
   user-select: none;
-  overflow: hidden;
-}
-
-h1 {
-  font-size: 3em;
-  margin-bottom: 1rem;
-  text-shadow: 0 0 10px #00ffff;
-}
-
-h2 {
-  margin-bottom: 1rem;
-  color: #44ffcc;
-}
-
-button {
-  background: #00ffff;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  border-radius: 8px;
-  color: #121212;
-  cursor: pointer;
-  box-shadow: 0 0 15px #00ffff;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #00bbbb;
 }
 
 .hidden {
@@ -46,57 +12,66 @@ button:hover {
 }
 
 #menu, #levelSelect, #gameUI {
-  margin-top: 50px;
+  padding: 20px;
+}
+
+button {
+  padding: 12px 30px;
+  font-size: 1.2rem;
+  background-color: #00ffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #121212;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #00bbbb;
 }
 
 #levelList {
   list-style: none;
-  max-width: 400px;
-  margin: 0 auto 2rem auto;
   padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+  border: 2px solid #00ffff;
+  border-radius: 5px;
 }
 
 #levelList li {
-  background: #222;
-  padding: 0.8rem 1rem;
-  margin-bottom: 0.5rem;
-  border-radius: 6px;
+  padding: 10px;
+  border-bottom: 1px solid #00bbbb;
   cursor: pointer;
-  box-shadow: 0 0 10px #007777 inset;
-  color: #44ffcc;
-  font-weight: bold;
-  transition: background-color 0.3s;
+  font-size: 1.1rem;
+  transition: background-color 0.2s ease;
 }
 
 #levelList li:hover {
-  background-color: #00bbbb;
+  background-color: #004444;
 }
 
 #gameCanvas {
-  display: block;
-  margin: 20px auto;
-  background: #121212;
   border: 3px solid #00ffff;
-  box-shadow: 0 0 20px #00ffff;
+  background-color: #222;
+  display: block;
+  margin: 15px auto;
+  border-radius: 6px;
 }
 
-#levelName {
-  font-size: 1.5rem;
-  margin-bottom: 5px;
-  text-shadow: 0 0 8px #00ffff;
-}
-
-#score {
-  font-size: 1.2rem;
-  margin-top: 5px;
-  color: #44ffcc;
-  text-shadow: 0 0 8px #44ffcc;
-}
-
-#message {
+#score, #message {
   font-size: 1.2rem;
   margin-top: 10px;
-  color: #ff4444;
-  text-shadow: 0 0 8px #ff4444;
-  height: 30px;
+}
+
+#volumeControl {
+  margin-top: 10px;
+  color: #00ffff;
+}
+
+#volumeRange {
+  vertical-align: middle;
+  width: 200px;
+  cursor: pointer;
 }
