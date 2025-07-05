@@ -125,3 +125,64 @@ button:hover {
 .hidden {
   display: none;
 }
+
+/* Styles par niveau */
+.level1 {
+  background: linear-gradient(90deg, #ff0077, #ff66aa);
+  color: #fff;
+  text-shadow: 0 0 5px #ff66aa;
+  box-shadow: inset 0 0 10px #ff66aa44;
+}
+
+.level1:hover {
+  background: #ff3399;
+  transform: scale(1.03);
+}
+
+.level2 {
+  background: linear-gradient(90deg, #00ccff, #0066ff);
+  color: #fff;
+  text-shadow: 0 0 5px #00ccff;
+  box-shadow: inset 0 0 10px #00ccff55;
+}
+
+.level2:hover {
+  background: #0099dd;
+  transform: scale(1.03);
+}
+
+.level3 {
+  background: linear-gradient(90deg, #ffff00, #ffaa00);
+  color: #000;
+  text-shadow: 0 0 5px #ffaa00;
+  box-shadow: inset 0 0 10px #ffaa0044;
+}
+
+.level3:hover {
+  background: #ffcc00;
+  transform: scale(1.03);
+}
+
+.level4 {
+  background: linear-gradient(90deg, #9900ff, #cc66ff);
+  color: #fff;
+  text-shadow: 0 0 5px #cc66ff;
+  box-shadow: inset 0 0 10px #cc66ff33;
+}
+
+.level4:hover {
+  background: #b300ff;
+  transform: scale(1.03);
+}
+
+.level5 {
+  background: linear-gradient(90deg, #00ff99, #00cc66);
+  color: #000;
+  text-shadow: 0 0 5px #00cc66;
+  box-shadow: inset 0 0 10px #00cc6644;
+}
+
+.level5:hover {
+  background: #00dd88;
+  transform: scale(1.03);
+}
