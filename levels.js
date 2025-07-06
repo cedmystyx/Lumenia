@@ -4,76 +4,35 @@ export function getLevels() {
       name: "Stereo Madness",
       speed: 6,
       obstacles: [
+        // 0‑30 % cube
         { type: "classic", x: 200, width: 60, height: 30 },
         { type: "spike", x: 400, size: 30 },
         { type: "classic", x: 600, width: 30, height: 30 },
-        { type: "spike", x: 800, size: 30 },
-        { type: "spike", x: 830, size: 30 },
-        { type: "movingPlatform", x: 1000, width: 100, height: 15, range: 80, axis: "horizontal" },
-        { type: "spike", x: 1200, size: 30 },
-        { type: "classic", x: 1400, width: 60, height: 30 },
-        { type: "spike", x: 1600, size: 30 },
-        { type: "movingPlatformSinus", x: 1800, width: 100, height: 15, amplitude: 30, frequency: 0.02 },
-        { type: "spike", x: 2000, size: 30 },
-        { type: "classic", x: 2200, width: 30, height: 30 },
-        { type: "spike", x: 2400, size: 30 },
-        { type: "movingPlatform", x: 2600, width: 100, height: 15, range: 60, axis: "vertical" },
-        { type: "classic", x: 2800, width: 60, height: 30 },
-        { type: "spike", x: 3000, size: 30 },
-        { type: "spike", x: 3030, size: 30 },
-        { type: "classic", x: 3200, width: 60, height: 30 },
-        { type: "movingPlatformSinus", x: 3400, width: 80, height: 15, amplitude: 50, frequency: 0.03 },
-        { type: "spike", x: 3600, size: 30 },
-        { type: "spike", x: 3630, size: 30 },
-        { type: "spike", x: 3660, size: 30 },
-        { type: "classic", x: 3800, width: 40, height: 30 },
-        { type: "spike", x: 4000, size: 30 },
-        { type: "movingPlatform", x: 4200, width: 100, height: 15, range: 100, axis: "horizontal" },
-        { type: "spike", x: 4400, size: 30 },
-        { type: "classic", x: 4600, width: 50, height: 30 },
-        { type: "movingPlatformSinus", x: 4800, width: 90, height: 15, amplitude: 45, frequency: 0.025 },
-        { type: "spike", x: 5000, size: 30 },
-        { type: "spike", x: 5030, size: 30 },
-        { type: "spike", x: 5060, size: 30 },
-        { type: "classic", x: 5200, width: 60, height: 30 },
-        { type: "spike", x: 5400, size: 30 },
-        { type: "movingPlatform", x: 5600, width: 100, height: 15, range: 90, axis: "vertical" },
-        { type: "spike", x: 5800, size: 30 },
-        { type: "classic", x: 6000, width: 50, height: 30 },
-        { type: "goal", x: 6200 }
-      ]
-    },
-
-    {
-      name: "Back on Track",
-      speed: 7,
-      obstacles: [
-        { type: "spike", x: 200, size: 30 },
-        { type: "classic", x: 350, width: 60, height: 30 },
-        { type: "movingPlatform", x: 550, width: 100, height: 15, range: 100, axis: "vertical" },
-        { type: "spike", x: 750, size: 30 },
-        { type: "spike", x: 800, size: 30 },
-        { type: "classic", x: 1000, width: 30, height: 30 },
-        { type: "spike", x: 1200, size: 30 },
-        { type: "movingPlatformSinus", x: 1400, width: 90, height: 15, amplitude: 40, frequency: 0.025 },
-        { type: "classic", x: 1600, width: 30, height: 30 },
-        { type: "spike", x: 1800, size: 30 },
-        { type: "classic", x: 2000, width: 40, height: 30 },
-        { type: "spike", x: 2200, size: 30 },
-        { type: "spike", x: 2230, size: 30 },
-        { type: "movingPlatform", x: 2400, width: 100, height: 15, range: 80, axis: "horizontal" },
-        { type: "spike", x: 2600, size: 30 },
-        { type: "spike", x: 2630, size: 30 },
-        { type: "classic", x: 2800, width: 60, height: 30 },
-        { type: "spike", x: 3000, size: 30 },
-        { type: "classic", x: 3200, width: 60, height: 30 },
-        { type: "movingPlatform", x: 3400, width: 100, height: 15, range: 70, axis: "vertical" },
-        { type: "spike", x: 3600, size: 30 },
-        { type: "spike", x: 3630, size: 30 },
-        { type: "movingPlatformSinus", x: 3800, width: 90, height: 15, amplitude: 50, frequency: 0.03 },
-        { type: "spike", x: 4000, size: 30 },
-        { type: "goal", x: 4300 }
+        // transitions cube → ship à ~30 %
+        { type: "ship_enter", x: 800 },
+        { type: "ship_path", x: 900, width: 200, height: 100, pathType: "up-down" },
+        // ship 30‑48 %
+        { type: "ship_path", x: 1150, width: 200, height: 120, pathType: "zigzag" },
+        { type: "ship_exit", x: 1400 },
+        // cube 48‑85 %
+        { type: "stair", x: 1500, height: 4, stepWidth: 30, stepHeight: 20 },
+        { type: "classic", x: 1700, width: 60, height: 30 },
+        { type: "spike", x: 1900, size: 30 },
+        { type: "stair", x: 2000, height: -3, stepWidth: 30, stepHeight: 20 }, // descend
+        // coin routes
+        { type: "pillar_pair", x: 2200, spacing: 40, count: 3 },
+        // transition cube → ship ~85 %
+        { type: "ship_enter", x: 2400 },
+        { type: "ship_path", x: 2600, width: 300, height: 100, pathType: "straight" },
+        { type: "ship_path", x: 2900, width: 200, height: 120, pathType: "zigzag" },
+        { type: "ship_exit", x: 3150 },
+        // coin route micro-branch
+        { type: "stair", x: 3200, height: 2, stepWidth: 20, stepHeight: 15 },
+        // finish
+        { type: "classic", x: 3400, width: 60, height: 30 },
+        { type: "goal", x: 3600 }
       ]
     }
+    // → Autres niveaux officiels seront faits de la même manière : transitions, formes, patterns
   ];
 }
